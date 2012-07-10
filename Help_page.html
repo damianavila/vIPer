@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--
+  Copyright 2010 Google Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  Original slides: Marcin Wichary (mwichary@google.com)
+  Modifications: Ernest Delgado (ernestd@google.com)
+                 Alex Russell (slightlyoff@chromium.org)
+
+  landslide modifications: Adam Zapletal (adamzap@gmail.com)
+                           Nicolas Perriault (nperriault@gmail.com)
+-->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>vIPer</title>
+    <!-- Styles -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true},
+    "HTML-CSS": { 
+      styles: { '.MathJax_Display': {"margin": 0}} }
+    });</script>
+    <script type="text/javascript"
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="stylesheet" media="print" href="IPslider/themes/notebook/css/print.css">
+    <link rel="stylesheet" media="screen, projection" href="IPslider/themes/notebook/css/screen.css">
+    
+    
+    <!-- /Styles -->
+    <!-- Javascripts -->
+    
+    <script type="text/javascript" src="IPslider/themes/notebook/js/slides.js"></script>
+    
+    
+    <!-- /Javascripts -->
+</head>
+<body>
+  <div id="blank"></div>
+  <div class="presentation">
+    <div class="slides">
+      
+      <!-- slide source: Help_page.rst -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            <header><h1>vIPer</h1></header>
+            
+            
+            <section><p>vIPer is an application specifically designed to work with IPython notebooks.</p>
+<p>With vIPer you can:</p>
+<ul class="simple">
+<li>Write and execute IPython notebooks.</li>
+<li>Generate static html views of IPython notebooks: <a class="reference external" href="http://www.staticviper.oquanta.info">http://www.staticviper.oquanta.info</a></li>
+<li>Generate slideshow views of IPython notebooks: <a class="reference external" href="http://www.slideviper.oquanta.info">http://www.slideviper.oquanta.info</a></li>
+<li>Split your screen to see how your changes in the current notebook are rendered in html and slideshow views.</li>
+<li>Record audio and video from your IPython sessions: <a class="reference external" href="http://www.youtube.com/watch?v=n5IWwJnWkzQ&amp;feature=g-upl">http://www.youtube.com/watch?v=n5IWwJnWkzQ&amp;feature=g-upl</a></li>
+<li>Surf the web.</li>
+<li>And more is comming...</li>
+</ul>
+
+
+<h1>How to use it?</h1>
+<p>$ipython notebook --pylab=inline --no-browser</p>
+<p>(pylab is optional)</p>
+<p>$python viper.py</p>
+<p>(Dashboard page use port 8888, but you want to use another port, point to it using the address bar: Ctrl+a)</p>
+
+
+<h1>Dependencies</h1>
+<p>Ver: 0.13 (this is a very alpha release, you can play with it... but surely you will found several bugs.</p>
+<ul class="simple">
+<li>Python 2.7</li>
+<li>IPython &gt; 0.12 (with its own dependencies)</li>
+<li>PyQt &gt; 4.9</li>
+<li>Pygments</li>
+<li>Latest Docutils</li>
+</ul>
+<p>For example:</p>
+<p>curl <a class="reference external" href="http://docutils.svn.sourceforge.net/viewvc/docutils/trunk/docutils/?view=tar">http://docutils.svn.sourceforge.net/viewvc/docutils/trunk/docutils/?view=tar</a> &gt; docutils.gz</p>
+<p>pip install -U docutils.gz</p>
+<ul class="simple">
+<li>RecordMyDesktop (if you want to record audio and video).</li>
+</ul>
+
+
+<h1>Slide mode</h1>
+<p>Use ---- in a Markdown cell to separate each slide in the working notebook.</p>
+<p>The title of each slide is the first cell after ----, except in the first one (you do not have to begin with the notebook with ---- ).</p>
+<p>All you write under &quot;Presenter notes&quot; will be only rendered in the presenter mode of slideshow view (pressing &quot;p&quot;).</p>
+<p>In the slide view, press &quot;h&quot; for more help.</p>
+
+
+<h1>Shorcuts</h1>
+<p>NewTab:    Ctrl+t</p>
+<p>CloseTab:  Ctrl+w</p>
+<p>AdressBar: Ctrl+a</p>
+<p>Go2AdrBar: Ctrl+l</p>
+<p>DelAdrBar: Ctrl+d</p>
+<p>Cut:       Ctrl+x</p>
+<p>Copy:      Ctrl+c</p>
+<p>Paste:     Ctrl+v</p>
+<p>Undo:      Ctrl+z</p>
+<p>Redo:      Ctrl+y</p>
+<p>SaveNoteb: Ctrl+s or Ctrl+m+s</p>
+<p>Search:    Ctrl+f</p>
+<p>Zoom:      Ctrl++/+-/+0</p>
+<p>Print:     Ctrl+p</p>
+<p>Htmler:    Ctrl+j</p>
+<p>Slider:    Ctrl+k</p>
+<p>Record:    Ctrl+r</p>
+<p>StopRec:   Ctrl+Alt+s</p>
+<p>SplitVert: F9</p>
+<p>SplitHori: F10</p>
+<p>SplitTog:  F11</p>
+<p>FullScr:   F12</p>
+<p>Help:      Ctrl+h</p>
+<p>Quit:      Ctrl+q</p>
+
+
+<h1>Author: Damián Avila, Jul 2012</h1></section>
+            
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <script>main()</script>
+</body>
+</html>
