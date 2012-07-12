@@ -32,6 +32,7 @@ Ver: 0.13 (this is a very alpha release, you can play with it... but surely you 
 * Python 2.7
 * IPython > 0.12 (with its own dependencies)
 * PyQt > 4.9
+* Jinja2
 * Pygments
 * Latest Docutils
 
