@@ -21,6 +21,7 @@ How to use it?
 (pylab is optional)
 
 Note: Set the --notebook-dir as the vIPer directory or open ipython notebook in the same directory where vIPer and the notebooks you are working lives.
+*****
 
 \$python viper.py
 
