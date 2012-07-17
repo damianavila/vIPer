@@ -20,6 +20,8 @@ How to use it?
 
 (pylab is optional)
 
+Note: Set the --notebook-dir as the vIPer directory or open ipython notebook in the same directory where vIPer and the notebooks you are working lives.
+
 \$python viper.py
 
 (Dashboard page use port 8888, but you want to use another port, point to it using the address bar: Ctrl+a)
