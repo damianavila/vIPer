@@ -137,16 +137,17 @@ class MainWindow(QtGui.QMainWindow):
         self.nbconverted = nbconvert.main(self.titleHistory[-1] +
          '.ipynb', format='rst')
 
-    def nbHtmlConverter(self):
+    def nbHtmlConverter(self, _format):
         self.nbhtmlconverted = nbconvert.main(self.titleHistory[-1] +
-         '.ipynb', format='html')
+         '.ipynb', _format)
 
     def screenHtmled(self):
         localO = self.titleHistory[-1] + '.html'
         try:
             l = 'Building a view from the IPython notebook, please wait...'
             self.statusBar().showMessage(l, 3000)
-            self.screenO = ScreenHtmlerIpy(localO, self)
+#            self.screenO = ScreenHtmlerIpy("html", localO, self)
+            self.screenOS = ScreenHtmlerIpy("blogger-html", localO, self)
             self.addTab(QtCore.QUrl.fromLocalFile(self.path + '/' + localO))
         except IOError:
             l = 'This tab is not an IPython notebook'
@@ -211,10 +212,11 @@ class MainWindow(QtGui.QMainWindow):
 
 
 class ScreenHtmlerIpy:
-    def __init__(self, destination, container):
+    def __init__(self, _format, destination, container):
         self.container = container
         self.destination = destination
-        self.container.nbHtmlConverter()
+        self._format = _format
+        self.container.nbHtmlConverter(self._format)
 
 
 class ScreenHtmler:
