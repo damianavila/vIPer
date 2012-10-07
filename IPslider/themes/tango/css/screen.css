@@ -18,16 +18,6 @@ section h1, section h2, section h3, section h4, section h5, section h6 {
 
 img { display: block; margin: auto; }
 
-body {
-  font: 14px "Hoefler Text", "Georgia", 'Times', "Bitstream Vera Serif", serif;
-  background: #555753;
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
-  color: #222222;
-  background: #fefefe;
-}
-
 div.presentation {
   position: absolute;
   width: 100%;
@@ -177,26 +167,6 @@ section img.align-left {
   display: block;
   margin-right: auto;
   margin-left: 0;
-}
-
-a {
-  color: inherit;
-  display: inline-block;
-  text-decoration: none;
-  line-height: 110%;
-  border-bottom: 2px solid #3f3f3f;
-}
-
-pre {
-  font-size: 16px;
-  font-family: Monaco, Courier, monospace;
-  border-width: 1px;
-  border-style: inset;
-}
-
-li {
-  padding: 10px 0;
-  font-size: 20px;
 }
 
 .slide header:only-child h1 {
