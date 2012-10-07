@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#ver_0.13
+#ver_0.14
 
 import sys
 import subprocess
@@ -137,12 +137,16 @@ class MainWindow(QtGui.QMainWindow):
         self.nbconverted = nbconvert.main(self.titleHistory[-1] +
          '.ipynb', format='rst')
 
+    def nbHtmlConverter(self):
+        self.nbhtmlconverted = nbconvert.main(self.titleHistory[-1] +
+         '.ipynb', format='html')
+
     def screenHtmled(self):
         localO = self.titleHistory[-1] + '.html'
         try:
-            l = 'Building a html view from the IPython notebook, please wait...'
+            l = 'Building a view from the IPython notebook, please wait...'
             self.statusBar().showMessage(l, 3000)
-            self.screenO = ScreenHtmler('notebook', 'relative', localO, self)
+            self.screenO = ScreenHtmlerIpy(localO, self)
             self.addTab(QtCore.QUrl.fromLocalFile(self.path + '/' + localO))
         except IOError:
             l = 'This tab is not an IPython notebook'
@@ -151,7 +155,7 @@ class MainWindow(QtGui.QMainWindow):
     def screenSlided(self):
         localS = self.titleHistory[-1] + '_slides.html'
         try:
-            l = 'Building a slideshow from the IPython notebook, please wait...'
+            l = 'Building slides from the IPython notebook, please wait...'
             self.statusBar().showMessage(l, 3000)
             self.screenS = ScreenHtmler('tango', 'relative', localS, self)
             self.addTab(QtCore.QUrl.fromLocalFile(self.path + '/' + localS))
@@ -162,14 +166,12 @@ class MainWindow(QtGui.QMainWindow):
     def screenSplittedVhtml(self):
         localO = self.titleHistory[-1] + '.html'
         self.splitter.setOrientation(QtCore.Qt.Vertical)
-        self.screenV = ScreenSplitter('notebook', 'relative', localO,
-            1.0, self)
+        self.screenV = ScreenSplitterIpy(localO, 1.0, self)
 
     def screenSplittedHhtml(self):
         localO = self.titleHistory[-1] + '.html'
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.screenH = ScreenSplitter('notebook', 'relative', localO,
-            1.0, self)
+        self.screenH = ScreenSplitter(localO, 1.0, self)
 
     def screenSplittedVslide(self):
         localS = self.titleHistory[-1] + '_slides.html'
@@ -208,6 +210,13 @@ class MainWindow(QtGui.QMainWindow):
         self.showFullScreen() if v else self.showNormal()
 
 
+class ScreenHtmlerIpy:
+    def __init__(self, destination, container):
+        self.container = container
+        self.destination = destination
+        self.container.nbHtmlConverter()
+
+
 class ScreenHtmler:
     def __init__(self, theme, relative, destination, container):
         self.container = container
@@ -219,6 +228,26 @@ class ScreenHtmler:
             container.titleHistory[-1] + '.rst',
                 theme=self.theme, relative=self.relative,
                     destination_file=self.destination).execute()
+
+
+class ScreenSplitterIpy:
+    def __init__(self, destination, zoom, container):
+        self.container = container
+        self.destination = destination
+        self.zoom = zoom
+        path = QtCore.QDir.currentPath()
+        try:
+            l = 'Building the splitted view, please wait...'
+            self.container.statusBar().showMessage(l, 3000)
+            self.container.screenHtmler = ScreenHtmlerIpy(
+                self.destination, self.container)
+            self.container.bottom.load(QtCore.QUrl.fromLocalFile(path +
+                '/' + self.destination))
+            self.container.bottom.setVisible(True)
+            self.container.bottom.setZoomFactor(self.zoom)
+        except IOError:
+            l = 'This tab is not an IPython notebook'
+            self.container.statusBar().showMessage(l, 3000)
 
 
 class ScreenSplitter:
@@ -330,16 +359,17 @@ class Tab(QtWebKit.QWebView):
 
     def titleTabChanged(self, t):
         if self.amCurrent():
-            self.container.tabs.setTabText(self.container.tabs.indexOf(self), t)
+            self.container.tabs.setTabText(
+                self.container.tabs.indexOf(self), t)
 
     def lineUrlToggled(self, v):
-        if v == True:
+        if v is True:
             self.lineUrl.show() or self.lineUrl.setFocus()
         else:
             (self.lineUrl.hide(), self.setFocus())
 
     def searchToggled(self, v):
-        if v == True:
+        if v is True:
             self.search.show() or self.search.setFocus()
         else:
             (self.search.hide(), self.setFocus())
