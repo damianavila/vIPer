@@ -168,7 +168,7 @@ class MainWindow(QtGui.QMainWindow):
         try:
             l = 'Building slides from the IPython notebook, please wait...'
             self.statusBar().showMessage(l, 3000)
-            self.screenS = ScreenHtmler('tango', 'relative', localS, self)
+            self.screenS = ScreenHtmler('impress', 'relative', localS, self)
             self.addTab(QtCore.QUrl.fromLocalFile(self.path + '/' + localS))
         except IOError:
             l = 'This tab is not an IPython notebook'
@@ -187,13 +187,13 @@ class MainWindow(QtGui.QMainWindow):
     def screenSplittedVslide(self):
         localS = self.titleHistory[-1] + '_slides.html'
         self.splitter.setOrientation(QtCore.Qt.Vertical)
-        self.screenV = ScreenSplitter('tango', 'relative', localS,
+        self.screenV = ScreenSplitter('impress', 'relative', localS,
             0.4, self)
 
     def screenSplittedHslide(self):
         localS = self.titleHistory[-1] + '_slides.html'
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.screenH = ScreenSplitter('tango', 'relative', localS,
+        self.screenH = ScreenSplitter('impress', 'relative', localS,
             0.5, self)
 
     def screenRecorded(self):
