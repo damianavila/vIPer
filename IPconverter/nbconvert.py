@@ -743,18 +743,18 @@ class ConverterHTML(Converter):
 
         header = []
         static = os.path.join(path.get_ipython_package_dir(),
-        'frontend', 'html', 'notebook', 'static',
+        'frontend', 'html', 'notebook', 'static', 'style',
         )
         here = os.path.split(os.path.abspath(__file__))[0]
-        css = os.path.join(static, 'css')
+        css = os.path.join(static)
         for sheet in [
             # do we need jquery and prettify?
             # os.path.join(static, 'jquery', 'css', 'themes', 'base', 'jquery-ui.min.css'),
             # os.path.join(static, 'prettify', 'prettify.css'),
-            os.path.join(css, 'boilerplate.css'),
-            os.path.join(css, 'fbm.css'),
-            os.path.join(css, 'notebook.css'),
-            os.path.join(css, 'renderedhtml.css'),
+            #os.path.join(css, 'boilerplate.css'),
+            #os.path.join(css, 'fbm.css'),
+            #os.path.join(css, 'notebook.css'),
+            os.path.join(css, 'style.min.css'),
             # our overrides:
             os.path.join(here, 'css', 'static_html.css'),
         ]:

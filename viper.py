@@ -143,36 +143,35 @@ class MainWindow(QtGui.QMainWindow):
 
     def screenHtmled(self):
         localO = self.titleHistory[-1] + '_complete.html'
-        try:
-            l = 'Building a view from the IPython notebook, please wait...'
-            self.statusBar().showMessage(l, 3000)
-#            self.screenO = ScreenHtmlerIpy("html", localO, self)
-            self.screenOS = ScreenHtmlerIpy("blogger-html", localO, self)
+#        try:
+        l = 'Building a view from the IPython notebook, please wait...'
+        self.statusBar().showMessage(l, 3000)
+        self.screenOS = ScreenHtmlerIpy("blogger-html", localO, self)
+        with open(self.path + '/' +
+            self.titleHistory[-1] + '_complete.html', 'w') as f:
             with open(self.path + '/' +
-                self.titleHistory[-1] + '_complete.html', 'w') as f:
-                with open(self.path + '/' +
-                    self.titleHistory[-1] + '_header.html', 'r') as fh:
-                    for line in fh.readlines():
-                        f.write(line)
-                with open(self.path + '/' +
-                    self.titleHistory[-1] + '.html', 'r') as fh:
-                    for line in fh.readlines():
-                        f.write(line)
-            self.addTab(QtCore.QUrl.fromLocalFile(self.path + '/' + localO))
-        except IOError:
-            l = 'This tab is not an IPython notebook'
-            self.statusBar().showMessage(l, 3000)
+                self.titleHistory[-1] + '_header.html', 'r') as fh:
+                for line in fh.readlines():
+                    f.write(line)
+            with open(self.path + '/' +
+                self.titleHistory[-1] + '.html', 'r') as fh:
+                for line in fh.readlines():
+                    f.write(line)
+        self.addTab(QtCore.QUrl.fromLocalFile(self.path + '/' + localO))
+        #except IOError:
+            #l = 'This tab is not an IPython notebook'
+            #self.statusBar().showMessage(l, 3000)
 
     def screenSlided(self):
         localS = self.titleHistory[-1] + '_slides.html'
-        try:
-            l = 'Building slides from the IPython notebook, please wait...'
-            self.statusBar().showMessage(l, 3000)
-            self.screenS = ScreenHtmler('impress', 'relative', localS, self)
-            self.addTab(QtCore.QUrl.fromLocalFile(self.path + '/' + localS))
-        except IOError:
-            l = 'This tab is not an IPython notebook'
-            self.statusBar().showMessage(l, 3000)
+        #try:
+        l = 'Building slides from the IPython notebook, please wait...'
+        self.statusBar().showMessage(l, 3000)
+        self.screenS = ScreenHtmler('impress', 'relative', localS, self)
+        self.addTab(QtCore.QUrl.fromLocalFile(self.path + '/' + localS))
+        #except IOError:
+            #l = 'This tab is not an IPython notebook'
+            #self.statusBar().showMessage(l, 3000)
 
     def screenSplittedVhtml(self):
         localO = self.titleHistory[-1] + '.html'
@@ -182,7 +181,7 @@ class MainWindow(QtGui.QMainWindow):
     def screenSplittedHhtml(self):
         localO = self.titleHistory[-1] + '.html'
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.screenH = ScreenSplitter(localO, 1.0, self)
+        self.screenH = ScreenSplitterIpy(localO, 1.0, self)
 
     def screenSplittedVslide(self):
         localS = self.titleHistory[-1] + '_slides.html'
@@ -248,18 +247,18 @@ class ScreenSplitterIpy:
         self.destination = destination
         self.zoom = zoom
         path = QtCore.QDir.currentPath()
-        try:
-            l = 'Building the splitted view, please wait...'
-            self.container.statusBar().showMessage(l, 3000)
-            self.container.screenHtmler = ScreenHtmlerIpy(
-                self.destination, self.container)
-            self.container.bottom.load(QtCore.QUrl.fromLocalFile(path +
-                '/' + self.destination))
-            self.container.bottom.setVisible(True)
-            self.container.bottom.setZoomFactor(self.zoom)
-        except IOError:
-            l = 'This tab is not an IPython notebook'
-            self.container.statusBar().showMessage(l, 3000)
+        #try:
+        l = 'Building the splitted view, please wait...'
+        self.container.statusBar().showMessage(l, 3000)
+        self.container.screenHtmler = ScreenHtmlerIpy(
+            "blogger-html", self.destination, self.container)
+        self.container.bottom.load(QtCore.QUrl.fromLocalFile(path +
+            '/' + self.destination))
+        self.container.bottom.setVisible(True)
+        self.container.bottom.setZoomFactor(self.zoom)
+        #except IOError:
+            #l = 'This tab is not an IPython notebook'
+            #self.container.statusBar().showMessage(l, 3000)
 
 
 class ScreenSplitter:
@@ -270,18 +269,18 @@ class ScreenSplitter:
         self.destination = destination
         self.zoom = zoom
         path = QtCore.QDir.currentPath()
-        try:
-            l = 'Building the splitted view, please wait...'
-            self.container.statusBar().showMessage(l, 3000)
-            self.container.screenHtmler = ScreenHtmler(
-                self.theme, self.relative, self.destination, self.container)
-            self.container.bottom.load(QtCore.QUrl.fromLocalFile(path +
-                '/' + self.destination))
-            self.container.bottom.setVisible(True)
-            self.container.bottom.setZoomFactor(self.zoom)
-        except IOError:
-            l = 'This tab is not an IPython notebook'
-            self.container.statusBar().showMessage(l, 3000)
+        #try:
+        l = 'Building the splitted view, please wait...'
+        self.container.statusBar().showMessage(l, 3000)
+        self.container.screenHtmler = ScreenHtmler(
+            self.theme, self.relative, self.destination, self.container)
+        self.container.bottom.load(QtCore.QUrl.fromLocalFile(path +
+            '/' + self.destination))
+        self.container.bottom.setVisible(True)
+        self.container.bottom.setZoomFactor(self.zoom)
+        #except IOError:
+            #l = 'This tab is not an IPython notebook'
+            #self.container.statusBar().showMessage(l, 3000)
 
 
 class Tab(QtWebKit.QWebView):

@@ -8,3 +8,6 @@ body {
 .input_area {
   padding: 0.4em;
 }
+pre {
+border: 0px;
+}
