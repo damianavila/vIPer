@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
-#ver_0.14
+#ver_1.0
 
 import sys
 import subprocess
 import os
 import signal
 from PyQt4 import QtGui, QtCore, QtWebKit
-from IPconverter import nbconvert
-from IPslider import generator
+from nbconvert_viper import NbConvertApp
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -98,8 +97,12 @@ class MainWindow(QtGui.QMainWindow):
             self,
             triggered=self.newHelpTabTriggered,
             shortcut="Ctrl+h")
-        self.nbconvert = nbconvert
-        self.generator = generator
+        self.full = "full_html"
+        self.html = '.html'
+        self.rev = "reveal"
+        self.rev_html = '.reveal.html'
+        self.horizontal = QtCore.Qt.Horizontal
+        self.vertical = QtCore.Qt.Vertical
         self.addTab(QtCore.QUrl('http://127.0.0.1:8888/'))
 
     def addTab(self, url=QtCore.QUrl("")):
@@ -133,67 +136,34 @@ class MainWindow(QtGui.QMainWindow):
     def closeTabRequested(self, idx):
         self.tabs.widget(idx).deleteLater()
 
-    def nbRestConverter(self):
-        self.nbconverted = nbconvert.main(self.titleHistory[-1] +
-         '.ipynb', format='rst')
-
-    def nbHtmlConverter(self, _format):
-        self.nbhtmlconverted = nbconvert.main(self.titleHistory[-1] +
-         '.ipynb', _format)
+    def nbConverter(self, exporter):
+        self.nbconverted = NbConvertApp.instance()
+        self.nbconverted.start(["nbconvert.py",
+                                    "--NbConvertApp.write=True",
+                                    exporter,
+                                    self.titleHistory[-1] + '.ipynb'])
 
     def screenHtmled(self):
-        localO = self.titleHistory[-1] + '_complete.html'
-#        try:
-        l = 'Building a view from the IPython notebook, please wait...'
-        self.statusBar().showMessage(l, 3000)
-        self.screenOS = ScreenHtmlerIpy("blogger-html", localO, self)
-        with open(self.path + '/' +
-            self.titleHistory[-1] + '_complete.html', 'w') as f:
-            with open(self.path + '/' +
-                self.titleHistory[-1] + '_header.html', 'r') as fh:
-                for line in fh.readlines():
-                    f.write(line)
-            with open(self.path + '/' +
-                self.titleHistory[-1] + '.html', 'r') as fh:
-                for line in fh.readlines():
-                    f.write(line)
-        self.addTab(QtCore.QUrl.fromLocalFile(self.path + '/' + localO))
-        #except IOError:
-            #l = 'This tab is not an IPython notebook'
-            #self.statusBar().showMessage(l, 3000)
+        self.screenOS = ScreenMainer(self.full, self.html, self)
 
     def screenSlided(self):
-        localS = self.titleHistory[-1] + '_slides.html'
-        #try:
-        l = 'Building slides from the IPython notebook, please wait...'
-        self.statusBar().showMessage(l, 3000)
-        self.screenS = ScreenHtmler('impress', 'relative', localS, self)
-        self.addTab(QtCore.QUrl.fromLocalFile(self.path + '/' + localS))
-        #except IOError:
-            #l = 'This tab is not an IPython notebook'
-            #self.statusBar().showMessage(l, 3000)
+        self.screenOS = ScreenMainer(self.rev, self.rev_html, self)
 
     def screenSplittedVhtml(self):
-        localO = self.titleHistory[-1] + '.html'
-        self.splitter.setOrientation(QtCore.Qt.Vertical)
-        self.screenV = ScreenSplitterIpy(localO, 1.0, self)
+        self.screenV = ScreenSplitter(self.vertical, 1.0,
+            self.full, self.html, self)
 
     def screenSplittedHhtml(self):
-        localO = self.titleHistory[-1] + '.html'
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.screenH = ScreenSplitterIpy(localO, 1.0, self)
+        self.screenH = ScreenSplitter(self.horizontal, 1.0,
+            self.full, self.html, self)
 
     def screenSplittedVslide(self):
-        localS = self.titleHistory[-1] + '_slides.html'
-        self.splitter.setOrientation(QtCore.Qt.Vertical)
-        self.screenV = ScreenSplitter('impress', 'relative', localS,
-            0.4, self)
+        self.screenV = ScreenSplitter(self.vertical, 1.0,
+            self.rev, self.rev_html, self)
 
     def screenSplittedHslide(self):
-        localS = self.titleHistory[-1] + '_slides.html'
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.screenH = ScreenSplitter('impress', 'relative', localS,
-            0.5, self)
+        self.screenH = ScreenSplitter(self.horizontal, 1.0,
+            self.rev, self.rev_html, self)
 
     def screenRecorded(self):
         l = 'Recording audio and video...'
@@ -220,62 +190,48 @@ class MainWindow(QtGui.QMainWindow):
         self.showFullScreen() if v else self.showNormal()
 
 
-class ScreenHtmlerIpy:
-    def __init__(self, _format, destination, container):
+class Converter:
+    def __init__(self, exporter, container):
         self.container = container
-        self.destination = destination
-        self._format = _format
-        self.container.nbHtmlConverter(self._format)
+        self.exporter = exporter
+
+        self.container.nbConverter(self.exporter)
 
 
-class ScreenHtmler:
-    def __init__(self, theme, relative, destination, container):
+class ScreenMainer:
+    def __init__(self, exporter, extension, container):
         self.container = container
-        self.theme = theme
-        self.relative = relative
-        self.destination = destination
-        self.container.nbRestConverter()
-        self.container.nbslided = container.generator.Generator(
-            container.titleHistory[-1] + '.rst',
-                theme=self.theme, relative=self.relative,
-                    destination_file=self.destination).execute()
+        self.extension = extension
+        self.exporter = exporter
 
-
-class ScreenSplitterIpy:
-    def __init__(self, destination, zoom, container):
-        self.container = container
-        self.destination = destination
-        self.zoom = zoom
-        path = QtCore.QDir.currentPath()
-        #try:
-        l = 'Building the splitted view, please wait...'
+        localO = self.container.titleHistory[-1] + self.extension
+#        try:
+        l = 'Building a view from the IPython notebook, please wait...'
         self.container.statusBar().showMessage(l, 3000)
-        self.container.screenHtmler = ScreenHtmlerIpy(
-            "blogger-html", self.destination, self.container)
-        self.container.bottom.load(QtCore.QUrl.fromLocalFile(path +
-            '/' + self.destination))
-        self.container.bottom.setVisible(True)
-        self.container.bottom.setZoomFactor(self.zoom)
+        self.container.screenOS = Converter(self.exporter, self.container)
+        self.container.addTab(QtCore.QUrl.fromLocalFile(
+            self.container.path + '/' + localO))
         #except IOError:
             #l = 'This tab is not an IPython notebook'
-            #self.container.statusBar().showMessage(l, 3000)
+            #self.statusBar().showMessage(l, 3000)
 
 
 class ScreenSplitter:
-    def __init__(self, theme, relative, destination, zoom, container):
+    def __init__(self, orientation, zoom, exporter, extension, container):
         self.container = container
-        self.theme = theme
-        self.relative = relative
-        self.destination = destination
+        self.extension = extension
+        self.exporter = exporter
         self.zoom = zoom
-        path = QtCore.QDir.currentPath()
+        self.orientation = orientation
+
+        localO = self.container.titleHistory[-1] + self.extension
+        self.container.splitter.setOrientation(self.orientation)
         #try:
         l = 'Building the splitted view, please wait...'
         self.container.statusBar().showMessage(l, 3000)
-        self.container.screenHtmler = ScreenHtmler(
-            self.theme, self.relative, self.destination, self.container)
-        self.container.bottom.load(QtCore.QUrl.fromLocalFile(path +
-            '/' + self.destination))
+        self.container.screenHtmler = Converter(exporter, self.container)
+        self.container.bottom.load(QtCore.QUrl.fromLocalFile(
+            self.container.path + '/' + localO))
         self.container.bottom.setVisible(True)
         self.container.bottom.setZoomFactor(self.zoom)
         #except IOError:
