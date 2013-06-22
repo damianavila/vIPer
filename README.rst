@@ -6,10 +6,10 @@ vIPer is an application specifically designed to work with IPython notebooks.
 With vIPer you can:
 
 * Write and execute IPython notebooks.
-* Generate static html views of IPython notebooks: http://www.staticviper.oquanta.info
-* Generate slideshow views of IPython notebooks: http://www.slideviper.oquanta.info
+* Generate static html views of IPython notebooks.
+* Generate slideshow views of IPython notebooks.
 * Split your screen to see how your changes in the current notebook are rendered in html and slideshow views.
-* Record audio and video from your IPython sessions: http://www.youtube.com/watch?v=n5IWwJnWkzQ&feature=g-upl
+* Record audio and video from your IPython sessions.
 * Surf the web.
 * And more is comming...
 
@@ -29,10 +29,10 @@ How to use it?
 Dependencies
 ============
 
-Ver: 0.13 (this is a very alpha release, you can play with it... but surely you will found several bugs.
+Ver: 1.0 (this is the second major release, you can play with it... but surely you will found several bugs).
 
 * Python 2.7
-* IPython > 0.12 (with its own dependencies)
+* IPython > 1.0 (with its own dependencies)
 * PyQt > 4.9
 * Jinja2
 * Pygments
@@ -49,8 +49,8 @@ pip install -U docutils.gz
 License
 =======
 
-TBD (some code derived from others work is under APACHE license).
+MIT (some code derived from others work is under APACHE license).
 
-Author: Damián Avila, Jul 2012
-==============================
+Author: Damián Avila
+====================
 
