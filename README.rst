@@ -16,9 +16,7 @@ With vIPer you can:
 How to use it?
 ==============
 
-\$ipython notebook --pylab=inline --no-browser
-
-(pylab is optional)
+\$ipython notebook --no-browser
 
 *Note: Set the --notebook-dir as the vIPer directory or open ipython notebook in the same directory where vIPer and the notebooks you are working lives.*
 
@@ -29,27 +27,19 @@ How to use it?
 Dependencies
 ============
 
-Ver: 1.0 (this is the second major release, you can play with it... but surely you will found several bugs).
+**Version 1.1**: now supporting the last IPython release and using the IPython.nbconvert machinery (as usual... you can play with it, but surely you will find several bugs, just report them).
 
-* Python 2.7
-* IPython > 1.0 (with its own dependencies)
+* Python 2.7 (obviously...)
+* IPython > 1.1.0 (with its own dependencies)
 * PyQt > 4.9
 * Jinja2
 * Pygments
-* Latest Docutils
-
-For example:
-
-curl http://docutils.svn.sourceforge.net/viewvc/docutils/trunk/docutils/?view=tar > docutils.gz
-
-pip install -U docutils.gz
-
 * RecordMyDesktop (if you want to record audio and video).
 
 License
 =======
 
-MIT (some code derived from others work is under APACHE license).
+BSD-Modified (also known as New BSD or  Revisited BSD).
 
 Author: Damián Avila
 ====================

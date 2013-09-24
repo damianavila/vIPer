@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
-#ver_1.0
+#ver_1.1
 
 import sys
 import subprocess
 import os
 import signal
 from PyQt4 import QtGui, QtCore, QtWebKit
-from nbconvert_viper import NbConvertApp
+from IPython.nbformat import current as nbformat
+from IPython.nbconvert.exporters import HTMLExporter, SlidesExporter
+from IPython.nbconvert.post_processors.serve import ServePostProcessor
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -97,10 +99,12 @@ class MainWindow(QtGui.QMainWindow):
             self,
             triggered=self.newHelpTabTriggered,
             shortcut="Ctrl+h")
-        self.full = "full_html"
+        self.full = HTMLExporter()
         self.html = '.html'
-        self.rev = "reveal"
-        self.rev_html = '.reveal.html'
+        self.rev = SlidesExporter()
+        self.rev_html = '.slides.html'
+        self.server = ServePostProcessor()
+        self.servePool = []
         self.horizontal = QtCore.Qt.Horizontal
         self.vertical = QtCore.Qt.Vertical
         self.addTab(QtCore.QUrl('http://127.0.0.1:8888/'))
@@ -136,12 +140,14 @@ class MainWindow(QtGui.QMainWindow):
     def closeTabRequested(self, idx):
         self.tabs.widget(idx).deleteLater()
 
-    def nbConverter(self, exporter):
-        self.nbconverted = NbConvertApp.instance()
-        self.nbconverted.start(["nbconvert.py",
-                                    "--NbConvertApp.write=True",
-                                    exporter,
-                                    self.titleHistory[-1] + '.ipynb'])
+    def nbConverter(self, exporter, extension):
+        self.infile = self.titleHistory[-1] + '.ipynb'
+        self.notebook = open(self.infile).read()
+        self.nb_json = nbformat.reads_json(self.notebook)
+        self.exportHtml = exporter
+        (body, resources) = self.exportHtml.from_notebook_node(self.nb_json)
+        self.outfile = self.titleHistory[-1] + extension
+        open(self.outfile, 'w').write(body.encode('utf-8'))
 
     def screenHtmled(self):
         self.screenOS = ScreenMainer(self.full, self.html, self)
@@ -191,11 +197,30 @@ class MainWindow(QtGui.QMainWindow):
 
 
 class Converter:
-    def __init__(self, exporter, container):
+    def __init__(self, exporter, extension, container):
         self.container = container
+        self.extension = extension
         self.exporter = exporter
 
-        self.container.nbConverter(self.exporter)
+        self.container.nbConverter(self.exporter, self.extension)
+        self.container.servePool.append(ServeThread(self.extension,
+                                                    self.container))
+        if len(self.container.servePool) == 1:
+            self.container.servePool[0].start()
+        else:
+            pass
+
+
+class ServeThread(QtCore.QThread):
+    def __init__(self, extension, container):
+        QtCore.QThread.__init__(self)
+        self.container = container
+        self.extension = extension
+
+    def run(self):
+        localO = self.container.titleHistory[-1] + self.extension
+        self.container.server.open_in_browser = False
+        self.container.server(str(self.container.path) + '/' + localO)
 
 
 class ScreenMainer:
@@ -204,13 +229,15 @@ class ScreenMainer:
         self.extension = extension
         self.exporter = exporter
 
-        localO = self.container.titleHistory[-1] + self.extension
-#        try:
+        #try:
         l = 'Building a view from the IPython notebook, please wait...'
         self.container.statusBar().showMessage(l, 3000)
-        self.container.screenOS = Converter(self.exporter, self.container)
-        self.container.addTab(QtCore.QUrl.fromLocalFile(
-            self.container.path + '/' + localO))
+        self.container.screenOS = Converter(self.exporter,
+                                            self.extension,
+                                            self.container)
+        self.container.addTab(QtCore.QUrl('http://127.0.0.1:8000/' +
+                                           self.container.titleHistory[-1] +
+                                           self.extension))
         #except IOError:
             #l = 'This tab is not an IPython notebook'
             #self.statusBar().showMessage(l, 3000)
@@ -224,14 +251,15 @@ class ScreenSplitter:
         self.zoom = zoom
         self.orientation = orientation
 
-        localO = self.container.titleHistory[-1] + self.extension
         self.container.splitter.setOrientation(self.orientation)
         #try:
         l = 'Building the splitted view, please wait...'
         self.container.statusBar().showMessage(l, 3000)
-        self.container.screenHtmler = Converter(exporter, self.container)
-        self.container.bottom.load(QtCore.QUrl.fromLocalFile(
-            self.container.path + '/' + localO))
+        self.container.screenHtmler = Converter(exporter, self.extension,
+                                                          self.container)
+        self.container.bottom.load(QtCore.QUrl('http://127.0.0.1:8000/' +
+                                                self.container.titleHistory[-1] +
+                                                self.extension))
         self.container.bottom.setVisible(True)
         self.container.bottom.setZoomFactor(self.zoom)
         #except IOError:
